@@ -1,0 +1,44 @@
+name: Tag
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: paulhatch/semantic-version@v4.0.2
+        id: semver
+        name: Calculate version
+        with:
+          bump_each_commit: true
+          format: "${major}.${minor}.${patch}"
+          tag_prefix: "v"
+
+      - name: Add git tags
+        env:
+          MAJOR: ${{ steps.semver.outputs.major }}
+          MINOR: ${{ steps.semver.outputs.minor }}
+          VERSION: ${{ steps.semver.outputs.version }}
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          
+          git tag -a -m "Adding tags for release ${VERSION}" "v${VERSION}"
+          git push origin "v${VERSION}"
+
+          if [ "${MAJOR}" != "0" ]; then
+            # optimistic tags move, so we force these
+            git tag --force -a -m "Adding tags for release ${VERSION}" "v${MAJOR}"
+            git push --force origin "v${MAJOR}"
+
+            git tag --force -a -m "Adding tags for release ${VERSION}" "v${MAJOR}.${MINOR}"
+            git push --force origin "v${MAJOR}.${MINOR}"
+          fi
+        shell: bash
