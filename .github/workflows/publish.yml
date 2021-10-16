@@ -1,3 +1,8 @@
+# *** DO NOT EDIT
+# *** This workflow is maintained centrally via the twin-digital/common-config repository.
+#
+# Changes to this file will be overwritten.
+
 name: Tag
 
 on:
