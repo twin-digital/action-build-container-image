@@ -18,16 +18,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: |
-          git describe --tags --abbrev=0 '--match=v*[0-9].*[0-9].*[0-9]' main~1
-        shell: bash
-
       - uses: paulhatch/semantic-version@v4.0.2
         id: semver
         name: Calculate version
         with:
-          bump_each_commit: true
           format: "${major}.${minor}.${patch}"
+          short_tags: false
           tag_prefix: "v"
 
       - name: Add git tags
@@ -39,15 +35,13 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           
-          git tag "v${VERSION}"
-          git push origin "v${VERSION}"
-
+          git tag --force -a -m "Add tag for release ${VERSION}" "v${VERSION}"
+          git push --force origin "v${VERSION}"
           if [ "${MAJOR}" != "0" ]; then
-            # optimistic tags move, so we force these
-            git tag --force "v${MAJOR}"
+            # optimistic tags move, so we force these operations
+            git tag --force -a -m "Add major tag for release ${VERSION}" "v${MAJOR}"
             git push --force origin "v${MAJOR}"
-
-            git tag --force "v${MAJOR}.${MINOR}"
+            git tag --force -a -m "Add major.minor tag for release ${VERSION}" "v${MAJOR}.${MINOR}"
             git push --force origin "v${MAJOR}.${MINOR}"
           fi
         shell: bash
