@@ -1,6 +1,6 @@
 # Build Container Image
 
-Builds a container image with a sensible set of tags and labels. The image is made available via the local docker socket, and uploaded as a build artifact for further verification. The companion action, [load-container-image](https://github.com/twin-digital/load-container-image), can be used to load this artifact into a downstream job.
+Builds a container image with a sensible set of tags and labels. The image is made available via the local docker socket, and uploaded as a build artifact for further verification. The companion action, [Load Container Image](https://github.com/twin-digital/action-load-container-image), can be used to load this artifact into a downstream job.
 
 ## Usage
 
